@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spine Viewer</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <header>
+      <h1>Spine Viewer</h1>
+      <p id="subtitle">Tự nhận diện version · JSON &amp; .skel</p>
+    </header>
+    <div class="scroll">
+      <section>
+        <div class="btns">
+          <button class="primary" id="btnFiles">Mở file…</button>
+          <button id="btnFolder">Mở thư mục…</button>
+          <button id="btnClear">Xóa hết</button>
+        </div>
+        <input type="file" id="inFiles" multiple class="hidden">
+        <input type="file" id="inFolder" webkitdirectory multiple class="hidden">
+      </section>
+      <section>
+        <h2>Skeleton <span id="skCount"></span></h2>
+        <div class="list" id="skList"><div class="info">Chưa có dữ liệu. Kéo thả .json/.skel + .atlas + ảnh vào khung bên phải.</div></div>
+      </section>
+      <section id="secInfo" class="hidden">
+        <h2>Thông tin</h2>
+        <div class="info" id="info"></div>
+      </section>
+      <section id="secAnim" class="hidden">
+        <h2>Animation <span id="animCount"></span></h2>
+        <div class="list" id="animList"></div>
+        <label class="chk"><input type="checkbox" id="chkLoop" checked> Lặp (loop)</label>
+        <div class="row"><label>Mix (s)</label><input type="number" id="numMix" value="0" min="0" step="0.05"></div>
+      </section>
+      <section id="secSkin" class="hidden">
+        <h2>Skin <span id="skinCount"></span></h2>
+        <div class="list" id="skinList"></div>
+        <div class="info" id="skinHint" style="margin-top:6px"></div>
+      </section>
+      <section id="secView" class="hidden">
+        <h2>Hiển thị</h2>
+        <div class="row"><label>Tốc độ</label><input type="range" id="rngSpeed" min="0" max="10" step="0.05" value="1"><input type="number" id="numSpeed" min="0" step="0.1" value="1" style="flex:0 0 58px"></div>
+        <div class="row"><label>Nền</label><input type="color" id="colBg" value="#2b2f38"></div>
+        <div class="row"><label>Premult. α</label>
+          <select id="selPma"><option value="auto">Tự động</option><option value="on">Bật</option><option value="off">Tắt</option></select></div>
+        <h2 style="margin-top:10px">Debug</h2>
+        <div class="dbg-grid">
+          <label class="chk"><input type="checkbox" id="dbgBones"><span class="sw" style="background:#ff4040"></span>Bones</label>
+          <label class="chk"><input type="checkbox" id="dbgBoneNames">Tên bone</label>
+          <label class="chk"><input type="checkbox" id="dbgRegions"><span class="sw" style="background:#4060ff"></span>Slots (region)</label>
+          <label class="chk"><input type="checkbox" id="dbgHull"><span class="sw" style="background:#4060ff"></span>Mesh hull</label>
+          <label class="chk"><input type="checkbox" id="dbgTri"><span class="sw" style="background:#ffa400"></span>Mesh triangles</label>
+          <label class="chk"><input type="checkbox" id="dbgBBox"><span class="sw" style="background:#40ff40"></span>Bounding box</label>
+          <label class="chk"><input type="checkbox" id="dbgPaths"><span class="sw" style="background:#ff7f00"></span>Paths</label>
+          <label class="chk"><input type="checkbox" id="dbgClip"><span class="sw" style="background:#cc0000"></span>Clipping</label>
+          <label class="chk"><input type="checkbox" id="dbgSockets"><span class="sw" style="background:#ffcc33"></span>Sockets</label>
+          <label class="chk"><input type="checkbox" id="dbgSocketNames">Tên socket</label>
+        </div>
+        <label class="chk" style="margin-top:6px"><input type="checkbox" id="chkHier" checked> Hiện panel Hierarchy</label>
+        <div class="btns" style="margin-top:8px">
+          <button id="btnFit">Căn giữa (F)</button>
+          <button id="btnShot">Chụp PNG</button>
+        </div>
+      </section>
+      <section>
+        <h2>Phím tắt</h2>
+        <div class="info"><kbd>Space</kbd> dừng/chạy · <kbd>F</kbd> căn giữa · <kbd>←</kbd><kbd>→</kbd> đổi animation
+Lăn chuột: zoom · Kéo chuột: di chuyển
+Click lên nhân vật: chọn slot · <kbd>Esc</kbd> bỏ chọn · <kbd>H</kbd> ẩn/hiện phần đang chọn</div>
+      </section>
+    </div>
+  </aside>
+  <main id="stage">
+    <div id="canvasWrap"></div>
+    <canvas id="overlay"></canvas>
+    <div id="drop"><div class="box"><b>Kéo thả dữ liệu Spine vào đây</b>
+      .json hoặc .skel (.skel.bytes) + .atlas (.atlas.txt) + ảnh .png, hoặc file .zip<br>
+      Có thể thả cả thư mục, nhiều skeleton cùng lúc.<br>Version được tự nhận diện từ file.</div></div>
+    <div id="log"></div>
+    <div id="hud"></div>
+    <div id="bar">
+      <button id="btnPlay">⏸</button>
+      <input type="range" id="rngTime" min="0" max="1000" value="0">
+      <span class="t" id="lblTime">0.00 / 0.00</span>
+    </div>
+  </main>
+  <aside id="hier" class="hidden">
+    <div class="hd"><b>Hierarchy</b>
+      <button id="btnExpand" title="Mở rộng tất cả">Mở hết</button>
+      <button id="btnCollapse" title="Thu gọn">Thu gọn</button>
+      <button id="btnShowAll" title="Bỏ ẩn tất cả">Hiện hết</button></div>
+    <div class="tools">
+      <input type="text" id="treeFilter" placeholder="Tìm bone / slot / attachment / socket…">
+      <div class="row" style="margin:0"><label style="flex:0 0 64px">Khi chọn</label>
+        <select id="selFocus"><option value="none">Chỉ highlight</option><option value="dim">Làm mờ phần khác</option><option value="solo">Chỉ hiện phần chọn</option></select></div>
+    </div>
+    <div id="tree"></div>
+    <div id="props"><div class="info">Chọn một node trong cây, hoặc click lên nhân vật để chọn slot.</div></div>
+  </aside>
+</div>
+
+
+<script src="js/core/utils.js"></script>
+<script src="js/runtimes/registry.js"></script>
+<script src="js/runtimes/loader.js"></script>
+<script src="js/runtimes/adapters.js"></script>
+<script src="js/formats/version-detect.js"></script>
+<script src="js/formats/spine-binary-3x.js"></script>
+<script src="js/files.js"></script>
+<script src="js/viewer.js"></script>
+<script src="js/hierarchy.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

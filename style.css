@@ -1,0 +1,41 @@
+/* Style của trang chủ */
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --text: #1d2127; --muted: #69707d; --line: #e3e6ea;
+  --accent: #2f6fdf; --accent-soft: #e8f0fd; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #15171b; --card: #1e2127; --text: #e6e8ec; --muted: #9098a6; --line: #2e333c;
+    --accent: #5b9bff; --accent-soft: #1d2a40; --shadow: none; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+.site-header { padding: 40px 0 24px; }
+.site-header h1 { margin: 0; font-size: 28px; letter-spacing: -.01em; }
+.site-header p { margin: 6px 0 0; color: var(--muted); }
+
+.search { width: 100%; max-width: 360px; margin-top: 18px; padding: 9px 12px; font: inherit; color: var(--text);
+  background: var(--card); border: 1px solid var(--line); border-radius: 8px; outline: none; }
+.search:focus { border-color: var(--accent); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; padding-bottom: 40px; }
+.card { display: flex; flex-direction: column; gap: 8px; padding: 18px; background: var(--card); color: var(--text);
+  border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); transition: border-color .15s, transform .15s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card .top { display: flex; align-items: center; gap: 10px; }
+.card .icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); display: grid; place-items: center; font-size: 22px; flex: none; }
+.card h2 { margin: 0; font-size: 17px; }
+.card p { margin: 0; color: var(--muted); font-size: 14px; flex: 1; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.empty { color: var(--muted); padding: 30px 0; }
+
+.site-footer { border-top: 1px solid var(--line); padding: 16px 0 30px; color: var(--muted); font-size: 13px; }
+
+@media (max-width: 600px) {
+  .wrap { padding: 0 16px; }
+  .site-header { padding-top: 28px; }
+}
